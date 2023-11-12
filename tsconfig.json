@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "module": "CommonJS",
+    "removeComments": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "moduleResolution": "Node",
+    "rootDirs": ["src", "tests"],
+    "baseUrl": "src",
+    "paths": {
+      "@/*": [
+        "*"
+      ]
+    },
+  },
+  "plugins": [
+    {
+      "transform": "typescript-transform-paths"
+    }
+  ],
+  "include": ["src", "tests"],
+  "ts-node": {
+    "esm": true
+  }
+}
