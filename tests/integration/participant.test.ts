@@ -1,8 +1,8 @@
 import supertest from 'supertest';
 import httpStatus from 'http-status';
 import app from 'app';
+import participantFactory from '../factories/participant.factory';
 import { cleanDB } from '../helpers';
-// import participantFactory from '../factories/participant.factory';
 
 const api = supertest(app);
 
@@ -24,37 +24,52 @@ describe('POST /participants', () => {
     const { status, body } = await api.post('/participants').send({ name: 'banana', balance: 9876500 });
     expect(status).toBe(httpStatus.CREATED);
     expect(body).toEqual({
-        name: 'banana',
-        balance: 9876500,
-        id: expect.any(Number),
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
+      name: 'banana',
+      balance: 9876500,
+      id: expect.any(Number),
+      createdAt: expect.any(String),
+      updatedAt: expect.any(String),
     });
   });
 });
 
-// describe('GET /participants', () => {
-//   it('should return status 404 when participant doesnt exists', async () => {
-//     const response = await api.get('/participants/32');
-//     expect(response.status).toBe(404);
-//   });
+describe('GET /participants', () => {
+  it('should return all participants', async () => {
+    const { status: status1, body: participantsVoid } = await api.get('/participants');
+    expect(participantsVoid).toHaveLength(0);
+    expect(status1).toEqual(httpStatus.OK);
 
-//   it('should return status 400 when id is invalid', async () => {
-//     const response = await api.get('/participants/batata');
-//     expect(response.status).toBe(400);
-//   });
+    const participant1 = await participantFactory.buildRandom();
+    const { status: status2, body: oneParticipant } = await api.get('/participants');
+    expect(status2).toEqual(httpStatus.OK);
+    expect(oneParticipant).toHaveLength(1);
+    expect(oneParticipant).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: participant1.id,
+          name: participant1.name,
+          balance: participant1.balance,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      ]),
+    );
 
-//   it('should return one participant when given a valid and existing id', async () => {
-//     const participant = await participantFactory.build('banana', 1.99);
-//     const response = await api.get(`/participants/${participant.id}`);
-//     expect(response.body).toEqual(participant);
-//   });
-
-//   it('should return all participants if no id is present', async () => {
-//     const participant1 = await participantFactory.buildRandom();
-//     const participant2 = await participantFactory.buildRandom();
-//     const participant3 = await participantFactory.buildRandom();
-//     const response = await api.get('/participants');
-//     expect(response.body).toEqual(expect.arrayContaining([participant1, participant2, participant3]));
-//   });
-// });
+    await participantFactory.buildRandom();
+    await participantFactory.buildRandom();
+    const { status: status3, body: participants } = await api.get('/participants');
+    expect(status3).toBe(httpStatus.OK);
+    expect(participants).toHaveLength(3);
+    expect(participants).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(Number),
+          name: expect.any(String),
+          balance: expect.any(Number),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      ]),
+    );
+  });
+});
