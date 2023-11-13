@@ -11,7 +11,7 @@ async function findAll(_req: Request, res: Response) {
 
 async function create(req: Request, res: Response) {
   const inputParticipantDto = req.body as InputParticipantDto;
-  const participant: Participant = await ParticipantService.create(inputParticipantDto);
+  const participant = await ParticipantService.create(inputParticipantDto);
   return res.status(httpStatus.CREATED).send(participant);
 }
 
