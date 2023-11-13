@@ -5,9 +5,13 @@ function create(data: InputGameDto) {
   return prisma.game.create({ data });
 }
 
+function findById(id: number) {
+  return prisma.game.findUnique({ where: { id } });
+}
+
 function findAll() {
   return prisma.game.findMany();
 }
 
-const gameRepository = { findAll, create };
+const gameRepository = { findAll, findById, create };
 export default gameRepository;

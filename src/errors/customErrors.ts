@@ -14,6 +14,12 @@ export function notFound(entity: string = 'entity'): CustomError {
 export function conflict(entity: string = 'entity'): CustomError {
   return new CustomError('conflict', `${entity} already exists`, httpStatus.CONFLICT);
 }
+export function forbidden(message: string): CustomError {
+  return new CustomError('forbidden', message, httpStatus.FORBIDDEN);
+}
+export function gone(message: string): CustomError {
+  return new CustomError('gone', message, httpStatus.GONE);
+}
 export function unprocessableEntity(entity?: string | Array<string>): CustomError {
   let message: string;
 
@@ -35,6 +41,8 @@ const customErrors = {
   unauthorized,
   notFound,
   conflict,
+  forbidden,
+  gone,
   unprocessableEntity,
   internalServerError,
 };
