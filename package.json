@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm i && tsc",
+    "build": "npm i typescript && npm i && tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "npm run seed && node dist/server.js",
     "dev": "nodemon src/server.ts",
