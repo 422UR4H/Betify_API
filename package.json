@@ -4,7 +4,7 @@
   "description": "",
   "main": "./src/server.js",
   "scripts": {
-    "build": "npm i typescript && npm i && tsc",
+    "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "npm run seed && node dist/server.js",
     "dev": "nodemon src/server.ts",
@@ -37,8 +37,6 @@
     "joi": "^17.11.0",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^5.5.2",
-    "tsc": "^2.0.4",
-    "tsx": "^4.1.1",
     "typescript": "^5.2.2"
   },
   "devDependencies": {
