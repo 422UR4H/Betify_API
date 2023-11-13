@@ -18,7 +18,7 @@
     "test:migrate": "npm run load:test:env prisma migrate deploy",
     "test:seed": "npm run load:test:env prisma db seed",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
+    "test:cov": "npm run load:test:env jest --coverage --runInBand",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "eslint ."

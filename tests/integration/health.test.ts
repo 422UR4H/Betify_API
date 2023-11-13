@@ -1,6 +1,6 @@
 import supertest from 'supertest';
-import app from 'app';
 import httpStatus from 'http-status';
+import app from 'app';
 
 const api = supertest(app);
 

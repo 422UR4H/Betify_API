@@ -3,14 +3,14 @@ module.exports = {
     testEnvironment: 'node',
     moduleDirectories: ['node_modules', 'src'],
     transform: {
-      '.+\.ts$': 'ts-jest',
+      '.+\\.ts$': 'ts-jest',
     },
-    testMatch: ['<rootDir>/tests/*/.(test|spec).ts'],
+    testMatch: ['<rootDir>/tests/*/*.(test|spec).ts'],
     // setupFiles: ["<rootDir>/tests/setup-envs.ts"],
     // setupFilesAfterEnv: ["<rootDir>/tests/setup-files-after-env.ts"],
     moduleNameMapper: {
-      '@/(.)': '<rootDir>/src/$1',
-      '@test/(.)': '<rootDir>/tests/$1',
+      '@/(.*)': '<rootDir>/src/$1',
+      '@test/(.*)': '<rootDir>/tests/$1',
     },
     restoreMocks: true,
   };
