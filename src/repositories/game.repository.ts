@@ -5,5 +5,9 @@ function create(data: InputGameDto) {
   return prisma.game.create({ data });
 }
 
-const gameRepository = { create };
+function findAll() {
+  return prisma.game.findMany();
+}
+
+const gameRepository = { findAll, create };
 export default gameRepository;

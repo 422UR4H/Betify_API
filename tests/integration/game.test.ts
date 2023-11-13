@@ -39,43 +39,49 @@ describe('POST /games', () => {
   });
 });
 
-// describe('GET /games', () => {
-//   it('should return all games', async () => {
-//     const { status: status1, body: gamesVoid } = await api.get('/games');
-//     expect(gamesVoid).toHaveLength(0);
-//     expect(status1).toEqual(httpStatus.OK);
+describe('GET /games', () => {
+  it('should return all games', async () => {
+    const { status: status1, body: gamesVoid } = await api.get('/games');
+    expect(gamesVoid).toHaveLength(0);
+    expect(status1).toEqual(httpStatus.OK);
 
-//     const participant1 = await gameFactory.buildRandom();
-//     const { status: status2, body: oneParticipant } = await api.get('/games');
-//     expect(status2).toEqual(httpStatus.OK);
-//     expect(oneParticipant).toHaveLength(1);
-//     expect(oneParticipant).toEqual(
-//       expect.arrayContaining([
-//         expect.objectContaining({
-//           id: participant1.id,
-//           name: participant1.name,
-//           balance: participant1.balance,
-//           createdAt: expect.any(String),
-//           updatedAt: expect.any(String),
-//         }),
-//       ]),
-//     );
+    const game1 = await gameFactory.buildRandom();
+    const { status: status2, body: oneGame } = await api.get('/games');
+    expect(status2).toEqual(httpStatus.OK);
+    expect(oneGame).toHaveLength(1);
+    expect(oneGame).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: game1.id,
+          homeTeamName: game1.homeTeamName,
+          awayTeamName: game1.awayTeamName,
+          homeTeamScore: 0,
+          awayTeamScore: 0,
+          isFinished: false,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      ]),
+    );
 
-//     await gameFactory.buildRandom();
-//     await gameFactory.buildRandom();
-//     const { status: status3, body: games } = await api.get('/games');
-//     expect(status3).toBe(httpStatus.OK);
-//     expect(games).toHaveLength(3);
-//     expect(games).toEqual(
-//       expect.arrayContaining([
-//         expect.objectContaining({
-//           id: expect.any(Number),
-//           name: expect.any(String),
-//           balance: expect.any(Number),
-//           createdAt: expect.any(String),
-//           updatedAt: expect.any(String),
-//         }),
-//       ]),
-//     );
-//   });
-// });
+    await gameFactory.buildRandom();
+    await gameFactory.buildRandom();
+    const { status: status3, body: games } = await api.get('/games');
+    expect(status3).toBe(httpStatus.OK);
+    expect(games).toHaveLength(3);
+    expect(games).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: expect.any(Number),
+          homeTeamName: expect.any(String),
+          awayTeamName: expect.any(String),
+          homeTeamScore: 0,
+          awayTeamScore: 0,
+          isFinished: false,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      ]),
+    );
+  });
+});
