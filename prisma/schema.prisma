@@ -6,3 +6,54 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Participant {
+  id        Int      @id @default(autoincrement())
+  name      String
+  balance   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Bet Bet[]
+
+  @@map("participants")
+}
+
+model Game {
+  id            Int      @id @default(autoincrement())
+  homeTeamName  String   @unique
+  awayTeamName  String   @unique
+  homeTeamScore Int      @default(0)
+  awayTeamScore Int      @default(0)
+  isFinished    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  Bet Bet[]
+
+  @@map("games")
+}
+
+enum Status {
+  PENDING
+  LOST
+  WON
+}
+
+model Bet {
+  id            Int      @id @default(autoincrement())
+  homeTeamScore Int
+  awayTeamScore Int
+  amountBet     Int
+  status        Status   @default(PENDING)
+  amountWon     Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  gameId        Int
+  participantId Int
+
+  game        Game?        @relation(fields: [gameId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  participant Participant? @relation(fields: [participantId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("bets")
+}
