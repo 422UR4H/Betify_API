@@ -12,9 +12,8 @@ async function buildRandom() {
   return build(faker.lorem.words({ min: 1, max: 5 }), faker.lorem.words({ min: 1, max: 5 }));
 }
 
-const participantFactory = {
+const gameFactory = {
   build,
   buildRandom,
 };
-
-export default participantFactory;
+export default gameFactory;

@@ -17,5 +17,4 @@ const participantFactory = {
   build,
   buildRandom,
 };
-
 export default participantFactory;
