@@ -2,7 +2,7 @@
   "name": "betify",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/server.js",
   "scripts": {
     "build": "npm i typescript && npm i && tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
