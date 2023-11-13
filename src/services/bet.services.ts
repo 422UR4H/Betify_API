@@ -9,11 +9,13 @@ async function create(bet: InputBetDto) {
   const { participantId, amountBet } = bet;
 
   const participant = await participantService.findById(participantId);
+  // FIXME: unit test here
   if (participant.balance < amountBet) {
     throw customErrors.forbidden("Participant doesn't have enough balance");
   }
 
   const game = await gameService.findById(bet.gameId);
+  // FIXME: unit test here
   if (game.isFinished) throw customErrors.gone('This game is already over');
 
   const createBetDto: CreateBetDto = { ...bet, status: Status.PENDING };
