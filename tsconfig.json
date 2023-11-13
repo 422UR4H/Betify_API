@@ -9,8 +9,19 @@
     "moduleResolution": "Node",
     "rootDirs": ["src", "tests"],
     "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    },
+    "plugins": [
+      {
+        "transform": "typescript-transform-paths"
+      }
+    ]
   },
   "ts-node": {
-    "esm": true
-  }
+    "esm": true,
+    "transpileOnly": true,
+    "require": ["typescript-transform-paths/register"]
+  },
+  "include": ["src", "tests"]
 }
