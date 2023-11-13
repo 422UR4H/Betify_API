@@ -1,5 +1,5 @@
 function get(): string {
-    return "I'm OK!";
+  return "I'm OK!";
 }
 
 const healthService = { get };

@@ -6,7 +6,7 @@ import httpStatus from 'http-status';
 async function create(req: Request, res: Response) {
   const bet = req.body as InputBetDto;
   const newBet = await betService.create(bet);
-  return res.status(httpStatus.CREATED).send(newBet);
+  res.status(httpStatus.CREATED).send(newBet);
 }
 
 const betController = { create };
