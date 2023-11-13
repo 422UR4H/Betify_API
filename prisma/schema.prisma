@@ -9,7 +9,7 @@ datasource db {
 
 model Participant {
   id        Int      @id @default(autoincrement())
-  name      String
+  name      String   @db.VarChar(64)
   balance   Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -21,8 +21,8 @@ model Participant {
 
 model Game {
   id            Int      @id @default(autoincrement())
-  homeTeamName  String   @unique
-  awayTeamName  String   @unique
+  homeTeamName  String   @unique @db.VarChar(64)
+  awayTeamName  String   @unique @db.VarChar(64)
   homeTeamScore Int      @default(0)
   awayTeamScore Int      @default(0)
   isFinished    Boolean  @default(false)
@@ -42,9 +42,9 @@ enum Status {
 
 model Bet {
   id            Int      @id @default(autoincrement())
-  homeTeamScore Int
-  awayTeamScore Int
-  amountBet     Int
+  homeTeamScore Int      @default(0)
+  awayTeamScore Int      @default(0)
+  amountBet     Int      @default(0)
   status        Status   @default(PENDING)
   amountWon     Int?
   createdAt     DateTime @default(now())
