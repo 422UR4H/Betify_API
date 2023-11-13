@@ -21,8 +21,8 @@ model Participant {
 
 model Game {
   id            Int      @id @default(autoincrement())
-  homeTeamName  String   @unique @db.VarChar(64)
-  awayTeamName  String   @unique @db.VarChar(64)
+  homeTeamName  String   @db.VarChar(64)
+  awayTeamName  String   @db.VarChar(64)
   homeTeamScore Int      @default(0)
   awayTeamScore Int      @default(0)
   isFinished    Boolean  @default(false)
