@@ -1,5 +1,5 @@
 import prisma from '@/database/db.connection';
-import { InputParticipantDto } from '@/protocols/participants.protocols';
+import { InputParticipantDto } from '@/protocols/participant.protocols';
 
 function findAll() {
   return prisma.participant.findMany();

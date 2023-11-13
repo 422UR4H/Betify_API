@@ -1,4 +1,4 @@
-import healthService from "@/services/health.service";
+import healthService from "@/services/health.services";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 

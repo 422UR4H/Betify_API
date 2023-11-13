@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { InputParticipantDto } from '@/protocols/participants.protocols';
-import ParticipantService from '@/services/participant.service';
+import { InputParticipantDto } from '@/protocols/participant.protocols';
+import ParticipantService from '@/services/participant.services';
 import httpStatus from 'http-status';
 import { Participant } from '@prisma/client';
 

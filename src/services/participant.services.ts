@@ -1,4 +1,4 @@
-import { InputParticipantDto } from '@/protocols/participants.protocols';
+import { InputParticipantDto } from '@/protocols/participant.protocols';
 import participantRepository from '@/repositories/participant.repository';
 import { Participant } from '@prisma/client';
 
