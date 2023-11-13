@@ -6,7 +6,10 @@ function create(data: InputGameDto) {
 }
 
 function findById(id: number) {
-  return prisma.game.findUnique({ where: { id } });
+  return prisma.game.findUnique({
+    where: { id },
+    include: { Bet: true },
+  });
 }
 
 function findAll() {

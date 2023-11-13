@@ -6,6 +6,7 @@ import { Router } from 'express';
 const router = Router();
 
 router.get('/games', gameController.findAll);
+router.get('/games/:id', gameController.findById);
 router.post('/games', validateSchema(gameSchema), gameController.create);
 
 export default router;
