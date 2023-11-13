@@ -85,3 +85,35 @@ describe('GET /games', () => {
     );
   });
 });
+
+describe('GET /games/:id', () => {
+  it('should return status 400 when id is invalid', async () => {
+    const { status, text } = await api.get('/games/batata');
+    expect(status).toBe(httpStatus.BAD_REQUEST);
+    expect(text).toBe('id must be a positive non null integer');
+  });
+
+  it('should return 404 when game does not exists', async () => {
+    const { status, text } = await api.get('/games/1');
+    expect(status).toBe(httpStatus.NOT_FOUND);
+    expect(text).toBe('Game does not exist');
+  });
+
+  it('should return one game when given a valid and existing id', async () => {
+    const game = await gameFactory.buildRandom();
+    const { status, body } = await api.get(`/games/${game.id}`);
+    expect(status).toBe(httpStatus.OK);
+    expect(body).toEqual(
+      expect.objectContaining({
+        id: game.id,
+        homeTeamName: game.homeTeamName,
+        awayTeamName: game.awayTeamName,
+        homeTeamScore: 0,
+        awayTeamScore: 0,
+        isFinished: false,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      }),
+    );
+  });
+});
