@@ -14,11 +14,11 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "load:test:env": "dotenv -e .env.test",
-    "test": "npm run load:test:env jest --runInBand",
+    "test": "npm run load:test:env -- jest -- --runInBand",
     "test:migrate": "npm run load:test:env prisma migrate deploy",
     "test:seed": "npm run load:test:env prisma db seed",
     "test:watch": "jest --watch",
-    "test:cov": "npm run load:test:env jest --coverage --runInBand",
+    "test:cov": "npm run load:test:env -- jest -- --coverage -i",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "lint": "eslint ."
