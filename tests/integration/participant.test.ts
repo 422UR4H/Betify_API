@@ -11,7 +11,7 @@ beforeEach(async () => {
 });
 
 describe('POST /participants', () => {
-  it('should return status 422 when data is invalid', async () => {
+  it('should return status 422 when body is invalid', async () => {
     const response = await api.post('/participants').send({ name: 'banana' });
     expect(response.status).toBe(httpStatus.UNPROCESSABLE_ENTITY);
     const response2 = await api.post('/participants').send({ balance: 1.99 });
