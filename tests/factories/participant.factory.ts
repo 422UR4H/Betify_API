@@ -1,9 +1,9 @@
 import prisma from '@/database/db.connection';
 import { faker } from '@faker-js/faker/locale/en_US';
-import { Participant } from '@prisma/client';
 import { MAX_INT_32 } from '@/utils/constants.utils';
+import { OutputParticipantDto } from '@/protocols/participant.protocols';
 
-function build(name: string, balance: number): Promise<Participant> {
+function build(name: string, balance: number): Promise<OutputParticipantDto> {
   return prisma.participant.create({
     data: { name, balance },
   });
