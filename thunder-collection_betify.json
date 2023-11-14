@@ -1,0 +1,141 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "betify",
+    "dateExported": "2023-11-14T19:06:54.314Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "fb8fc61c-0a8d-47b2-bbf3-2358259eb7ab",
+            "colId": "c3d1921f-aa75-41e5-bc42-065908d1aec7",
+            "containerId": "",
+            "name": "get health",
+            "url": "http://localhost:5000/health",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-11-13T00:33:36.740Z",
+            "modified": "2023-11-13T00:33:53.810Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "a2fec8ae-48ac-47b9-8f80-9ec564c2ab43",
+            "colId": "c3d1921f-aa75-41e5-bc42-065908d1aec7",
+            "containerId": "",
+            "name": "create participant",
+            "url": "http://localhost:5000/participants",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-11-13T05:49:54.300Z",
+            "modified": "2023-11-14T17:59:26.094Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"banana\",\n  \"balance\": 1000\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "88a961b8-6b62-45b6-aca7-77ebfc568a67",
+            "colId": "c3d1921f-aa75-41e5-bc42-065908d1aec7",
+            "containerId": "",
+            "name": "findAll participants",
+            "url": "http://localhost:5000/participants",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2023-11-13T07:44:03.633Z",
+            "modified": "2023-11-13T07:44:15.171Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "470d523d-1292-446f-88f7-4b0bd2941bad",
+            "colId": "c3d1921f-aa75-41e5-bc42-065908d1aec7",
+            "containerId": "",
+            "name": "create game",
+            "url": "http://localhost:5000/games",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2023-11-13T08:23:06.080Z",
+            "modified": "2023-11-14T18:00:17.095Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"homeTeamName\": \"celtics\",\n  \"awayTeamName\": \"lakers\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "6a7a2ec0-98eb-49f4-b44b-b8691fddd2a5",
+            "colId": "c3d1921f-aa75-41e5-bc42-065908d1aec7",
+            "containerId": "",
+            "name": "create bet",
+            "url": "http://localhost:5000/bets",
+            "method": "POST",
+            "sortNum": 50000,
+            "created": "2023-11-13T12:03:58.663Z",
+            "modified": "2023-11-14T18:04:25.533Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"homeTeamScore\": 99,\n  \"awayTeamScore\": 109,\n  \"participantId\": 21,\n  \"amountBet\": 500,\n  \"gameId\": 23\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "778c66ad-018b-48c9-bd95-b3311b1debca",
+            "colId": "c3d1921f-aa75-41e5-bc42-065908d1aec7",
+            "containerId": "",
+            "name": "find game by id",
+            "url": "http://localhost:5000/games/23",
+            "method": "GET",
+            "sortNum": 60000,
+            "created": "2023-11-13T13:11:40.851Z",
+            "modified": "2023-11-14T18:04:31.299Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "2c5e4744-cee7-4898-89d6-833268b9da47",
+            "colId": "c3d1921f-aa75-41e5-bc42-065908d1aec7",
+            "containerId": "",
+            "name": "find games",
+            "url": "http://localhost:5000/games",
+            "method": "GET",
+            "sortNum": 70000,
+            "created": "2023-11-14T17:38:44.124Z",
+            "modified": "2023-11-14T17:38:59.889Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "80251441-351e-4d12-bfa3-55d85b451b82",
+            "colId": "c3d1921f-aa75-41e5-bc42-065908d1aec7",
+            "containerId": "",
+            "name": "finish game",
+            "url": "http://localhost:5000/games/23/finish",
+            "method": "POST",
+            "sortNum": 80000,
+            "created": "2023-11-14T17:51:09.857Z",
+            "modified": "2023-11-14T18:05:02.019Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"homeTeamScore\": 100,\n  \"awayTeamScore\": 110\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}
