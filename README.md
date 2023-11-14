@@ -18,8 +18,6 @@ Clone the repository and follow the list of commands to install the dependencies
 git clone https://github.com/422UR4H/Betify_API
 cd Betify_API
 npm install
-npm run migrate:dev
-npm run dev
 ```
 
 Create a .env file following the .env.example to connect the server to a database.
@@ -32,6 +30,12 @@ A local database or an deployed database can be used.
 Here's a deployed database used in that project:
 ```url
 postgres://betify_db_user:Ct5wV7MjSXt1yxdY7GvH93mieXUn1373@dpg-cl8mdgf6e7vc73a7uf60-a.oregon-postgres.render.com/betify_db
+```
+
+Finally, run:
+```bash
+npm run migrate:dev
+npm run dev
 ```
 
 ### To manual tests
