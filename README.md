@@ -22,7 +22,7 @@ npm install
 
 Create a .env file following the .env.example to connect the server to a database.
 ```bash
-DATABASE_URL=# endereço do banco local 
+DATABASE_URL=# local database link 
 PORT=5000
 ```
 
