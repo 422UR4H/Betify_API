@@ -34,7 +34,6 @@ async function finish(id: number, inputFinishGameDto: InputFinishGameDto): Promi
     awayTeamScore: inputFinishGameDto.awayTeamScore,
     isFinished: true,
   };
-
   const betsUpdatedStatus: Bet[] = updateBetStatus(game.Bet, inputFinishGameDto);
   const betsUpdated: Bet[] = updateBetAmountWon(betsUpdatedStatus);
   const finishBetsDto: FinishBetDto[] = betsUpdated.map((bet) => {
@@ -42,8 +41,7 @@ async function finish(id: number, inputFinishGameDto: InputFinishGameDto): Promi
     return { id, amountWon, status };
   });
   const finishParticipantDto: FinishParticipantDto[] = filterAmountWonWinParticipants(betsUpdated);
-  const result = await gameRepository.finish(finishGameDto, finishBetsDto, finishParticipantDto);
-  return result[0];
+  return (await gameRepository.finish(finishGameDto, finishBetsDto, finishParticipantDto))[0];
 }
 
 function updateBetStatus(bets: Bet[], game: InputFinishGameDto): Bet[] {
