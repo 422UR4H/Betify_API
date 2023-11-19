@@ -14,6 +14,9 @@ export function notFound(entity: string = 'entity'): CustomError {
 export function conflict(entity: string = 'entity'): CustomError {
   return new CustomError('conflict', `${entity} already exists`, httpStatus.CONFLICT);
 }
+export function gameAlreadyFinishedConflict(): CustomError {
+  return new CustomError('conflict', 'Game is already finished', httpStatus.CONFLICT);
+}
 export function forbidden(message: string): CustomError {
   return new CustomError('forbidden', message, httpStatus.FORBIDDEN);
 }

@@ -1,8 +1,9 @@
-import customErrors, { badRequest, notFound } from '@/errors/customErrors';
-import { InputFinishGameDto, InputGameDto, OutputGameDto } from '@/protocols/game.protocols';
-import betRepository from '@/repositories/bet.repository';
+import customErrors, { badRequest, gameAlreadyFinishedConflict, notFound } from '@/errors/customErrors';
+import { FinishBetDto, FinishParticipantDto } from '@/protocols/bet.protocols';
+import { FinishGameDto, InputFinishGameDto, InputGameDto, OutputGameDto } from '@/protocols/game.protocols';
 import gameRepository from '@/repositories/game.repository';
-import { Bet, Game } from '@prisma/client';
+import { HOUSE_FEE } from '@/utils/constants.utils';
+import { Bet, Game, Status } from '@prisma/client';
 
 async function findAll(): Promise<OutputGameDto[]> {
   return await gameRepository.findAll();
@@ -21,56 +22,62 @@ async function create(game: InputGameDto): Promise<OutputGameDto> {
   return await gameRepository.create(game);
 }
 
-async function finish(id: number, game: InputFinishGameDto): Promise<OutputGameDto> {
-  if (!id || isNaN(id)) throw badRequest('id must be a positive non null integer');
+// TODO: type this
+async function finish(id: number, inputFinishGameDto: InputFinishGameDto): Promise<Game> {
+  const game = await gameRepository.findById(id);
+  if (!game) throw notFound('Game');
+  if (game.isFinished) throw gameAlreadyFinishedConflict();
 
-  const currentGame = await gameRepository.findById(id);
+  const finishGameDto: FinishGameDto = {
+    id: game.id,
+    homeTeamScore: inputFinishGameDto.homeTeamScore,
+    awayTeamScore: inputFinishGameDto.awayTeamScore,
+    isFinished: true,
+  };
 
-  if (!currentGame) throw notFound('Game');
-  if (currentGame.isFinished) throw badRequest('game is already finished');
-
-  if (!game || !game.homeTeamScore || !game.awayTeamScore) {
-    throw badRequest('invalid game data!');
-  }
-  const result = await gameRepository.finish(id, game);
-
-  const winningBets = currentGame.Bet.filter((b) => {
-    return betWinning(
-      { awayTeamScore: game.awayTeamScore, homeTeamScore: game.homeTeamScore },
-      { awayTeamScore: b.awayTeamScore, homeTeamScore: b.homeTeamScore },
-    );
+  const betsUpdatedStatus: Bet[] = updateBetStatus(game.Bet, inputFinishGameDto);
+  const betsUpdated: Bet[] = updateBetAmountWon(betsUpdatedStatus);
+  const finishBetsDto: FinishBetDto[] = betsUpdated.map((bet) => {
+    const { id, amountWon, status } = bet;
+    return { id, amountWon, status };
   });
-  const amount = winningBets.reduce((total: number, b: Bet) => total + b.amountBet, 0);
-
-  const betResolves = currentGame.Bet.map((b) => {
-    const isWinner = betWinning(
-      { awayTeamScore: game.awayTeamScore, homeTeamScore: game.homeTeamScore },
-      { awayTeamScore: b.awayTeamScore, homeTeamScore: b.homeTeamScore },
-    );
-    const amountWon = isWinner ? Math.floor((b.amountBet / amount) * amount * 0.7) : 0;
-    const betResolve = {
-      betId: b.id,
-      amountWon,
-      isWinner,
-    };
-    return betResolve;
-  });
-  await betRepository.updateWinnersAndLosers(betResolves);
-
-  return result;
+  const finishParticipantDto: FinishParticipantDto[] = filterAmountWonWinParticipants(betsUpdated);
+  const result = await gameRepository.finish(finishGameDto, finishBetsDto, finishParticipantDto);
+  return result[0];
 }
 
-function betWinning(
-  game: Pick<Game, 'homeTeamScore' | 'awayTeamScore'>,
-  bet: Pick<Bet, 'awayTeamScore' | 'homeTeamScore'>,
-) {
-  const isPositiveScore = bet.homeTeamScore >= 0 && bet.awayTeamScore >= 0;
+function updateBetStatus(bets: Bet[], game: InputFinishGameDto): Bet[] {
+  return bets.map((bet) => ({ ...bet, status: betWasWon(bet, game) ? Status.WON : Status.LOST }));
+}
 
-  return (
-    (isPositiveScore && game.homeTeamScore > game.awayTeamScore && bet.homeTeamScore > bet.awayTeamScore) ||
-    (game.homeTeamScore < game.awayTeamScore && bet.homeTeamScore < bet.awayTeamScore) ||
-    (game.homeTeamScore === game.awayTeamScore && bet.homeTeamScore === bet.awayTeamScore)
-  );
+function betWasWon(bet: Bet, game: InputFinishGameDto): boolean {
+  return bet.homeTeamScore === game.homeTeamScore && bet.awayTeamScore === game.awayTeamScore;
+}
+
+function updateBetAmountWon(bets: Bet[]): Bet[] {
+  const sumValueAllBets = bets.reduce((sum, bet) => sum + bet.amountBet, 0);
+  const sumValueWinningBets = bets.reduce((sum, bet) => sum + (bet.status === Status.WON ? bet.amountBet : 0), 0);
+
+  return bets.map((bet) => ({ ...bet, amountWon: updateAmountWon(bet, sumValueAllBets, sumValueWinningBets) }));
+}
+
+function updateAmountWon(bet: Bet, sumValueAllBets: number, sumValueWinningBets: number): number {
+  return bet.status === Status.WON ? betAmountWon(bet.amountBet, sumValueAllBets, sumValueWinningBets) : 0;
+}
+
+function betAmountWon(amountBet: number, sumValueAllBets: number, sumValueWinningBets: number): number {
+  return Math.floor((amountBet / sumValueWinningBets) * sumValueAllBets * (1 - HOUSE_FEE));
+}
+
+function filterAmountWonWinParticipants(bets: Bet[]): FinishParticipantDto[] {
+  const result = [];
+  for (let i = 0; i < bets.length; i++) {
+    if (bets[i].status === Status.WON) {
+      const { participantId, amountWon } = bets[i];
+      result.push({ participantId, amountWon });
+    }
+  }
+  return result;
 }
 
 const gameService = { findAll, findById, create, finish };

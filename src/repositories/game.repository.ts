@@ -1,5 +1,6 @@
 import prisma from '@/database/db.connection';
-import { InputFinishGameDto, InputGameDto } from '@/protocols/game.protocols';
+import { FinishBetDto, FinishParticipantDto } from '@/protocols/bet.protocols';
+import { FinishGameDto, InputGameDto } from '@/protocols/game.protocols';
 
 function create(data: InputGameDto) {
   return prisma.game.create({ data });
@@ -16,11 +17,25 @@ function findAll() {
   return prisma.game.findMany();
 }
 
-function finish(id: number, game: InputFinishGameDto) {
-  return prisma.game.update({
-    where: { id },
-    data: { ...game, isFinished: true },
-  });
+function finish(game: FinishGameDto, bets: FinishBetDto[], participants: FinishParticipantDto[]) {
+  return prisma.$transaction([
+    prisma.game.update({
+      where: { id: game.id },
+      data: { ...game },
+    }),
+    ...bets.map((bet) =>
+      prisma.bet.update({
+        where: { id: bet.id },
+        data: { ...bet },
+      }),
+    ),
+    ...participants.map((p) =>
+      prisma.participant.update({
+        where: { id: p.participantId },
+        data: { balance: { increment: p.amountWon || 0 } },
+      }),
+    ),
+  ]);
 }
 
 const gameRepository = { findAll, findById, create, finish };
