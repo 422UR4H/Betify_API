@@ -3,9 +3,9 @@ import { CreateBetDto, InputBetDto, OutputBetDto } from '@/protocols/bet.protoco
 import betRepository from '@/repositories/bet.repository';
 import participantService from './participant.services';
 import gameService from './game.services';
-import { Status } from '@prisma/client';
+import { Bet, Status } from '@prisma/client';
 
-async function create(bet: InputBetDto) {
+async function create(bet: InputBetDto): Promise<Bet> {
   const { participantId, amountBet } = bet;
 
   const participant = await participantService.findById(participantId);
