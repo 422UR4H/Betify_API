@@ -5,13 +5,11 @@ function create(data: InputBetDto) {
   return prisma.bet.create({ data });
 }
 
-async function createAndLiquidadePayment(data: InputBetDto, participantService: any, balance: number) {
+async function createAndLiquidadePayment(data: InputBetDto, liquidatePayment: Function) {
+  const { participantId, amountBet } = data;
   return prisma.$transaction([
     create(data),
-    prisma.participant.update({
-      where: { id: data.participantId },
-      data: { balance: { decrement: data.amountBet } },
-    }),
+    liquidatePayment(participantId, amountBet)
   ]);
 }
 

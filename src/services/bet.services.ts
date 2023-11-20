@@ -19,11 +19,9 @@ async function createAndLiquidadePayment(bet: InputBetDto): Promise<Bet> {
   if (game.isFinished) throw customErrors.gone('This game is already over');
 
   const createBetDto: CreateBetDto = { ...bet, status: Status.PENDING };
-  // FIXME: optimize with transaction
   const newBet: OutputBetDto = (
-    await betRepository.createAndLiquidadePayment(createBetDto, participantService, balance)
+    await betRepository.createAndLiquidadePayment(createBetDto, participantService.liquidatePayment())
   )[0];
-  // await participantService.liquidatePayment(participantId, balance, amountBet);
 
   return newBet;
 }

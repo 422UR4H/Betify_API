@@ -13,12 +13,12 @@ function create(data: InputParticipantDto) {
   return prisma.participant.create({ data });
 }
 
-function updateBalance(id: number, newBalance: number) {
+export function liquidatePayment(id: number, amountBet: number) {
   return prisma.participant.update({
     where: { id },
-    data: { balance: newBalance },
+    data: { balance: { decrement: amountBet } },
   });
 }
 
-const participantRepository = { findAll, findById, create, updateBalance };
+const participantRepository = { findAll, findById, create, liquidatePayment };
 export default participantRepository;

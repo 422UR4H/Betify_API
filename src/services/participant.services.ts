@@ -1,6 +1,7 @@
 import customErrors from '@/errors/customErrors';
 import { InputParticipantDto, OutputParticipantDto } from '@/protocols/participant.protocols';
 import participantRepository from '@/repositories/participant.repository';
+import { liquidatePayment as liquidatePaymentRepository } from '@/repositories/participant.repository';
 
 async function findAll(): Promise<OutputParticipantDto[]> {
   return await participantRepository.findAll();
@@ -16,9 +17,9 @@ async function create(participant: InputParticipantDto): Promise<OutputParticipa
   return await participantRepository.create(participant);
 }
 
-async function liquidatePayment(id: number, balance: number, amountBet: number): Promise<OutputParticipantDto> {
-  const newBalance = balance - amountBet;
-  return await participantRepository.updateBalance(id, newBalance);
+function liquidatePayment(): Function {
+  // ready to scale: put new validation logic here
+  return liquidatePaymentRepository;
 }
 
 const participantService = { findAll, findById, create, liquidatePayment };
