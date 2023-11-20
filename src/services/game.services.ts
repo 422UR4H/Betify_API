@@ -28,6 +28,8 @@ async function create(game: InputGameDto): Promise<OutputGameDto> {
 }
 
 async function finish(id: number, inputFinishGameDto: InputFinishGameDto): Promise<Game> {
+  if (!id || isNaN(id)) throw badRequest('id must be a positive non null integer');
+
   const game = await gameRepository.findById(id);
   if (!game) throw notFound('Game');
   if (game.isFinished) throw gameAlreadyFinishedConflict();
@@ -38,42 +40,32 @@ async function finish(id: number, inputFinishGameDto: InputFinishGameDto): Promi
     awayTeamScore: inputFinishGameDto.awayTeamScore,
     isFinished: true,
   };
-  const betsUpdatedStatus: Bet[] = updateBetStatus(game.Bet, inputFinishGameDto);
-  // FIXME: declare winBets and sent to updateBetAmountWon
-  const betsUpdated: Bet[] = updateBetAmountWon(betsUpdatedStatus);
-  const finishBetsDto: FinishBetDto[] = betsUpdated.map((bet) => {
-    const { id, amountWon, status } = bet;
-    return { id, amountWon, status };
-  });
-  const finishParticipantDto: FinishParticipantDto[] = filterAmountWonWinParticipants(betsUpdated);
+  const betsUpdatedStatus: Bet[] = getBetsWithChangedStatus(game.Bet, inputFinishGameDto);
+  const winnerBets: Bet[] = betsUpdatedStatus.filter((bet) => bet.status === Status.WON);
+
+  const finishBetsDto: FinishBetDto[] = getBetAmountWon(betsUpdatedStatus, winnerBets);
+  const finishParticipantDto: FinishParticipantDto[] = filterAmountWonWinParticipants(finishBetsDto);
+
   return (await gameRepository.finish(finishGameDto, finishBetsDto, finishParticipantDto))[0];
 }
 
-function updateBetStatus(bets: Bet[], game: InputFinishGameDto): Bet[] {
-  return bets.map((bet) => ({ ...bet, status: betWasWon(bet, game) ? Status.WON : Status.LOST }));
+function getBetsWithChangedStatus(bets: Bet[], game: InputFinishGameDto): Bet[] {
+  return bets.map((bet) => ({ ...bet, status: getNewStatus(bet, game) }));
 }
 
-function betWasWon(bet: Bet, game: InputFinishGameDto): boolean {
-  return bet.homeTeamScore === game.homeTeamScore && bet.awayTeamScore === game.awayTeamScore;
-}
-
-function updateBetAmountWon(bets: Bet[]): Bet[] {
+function getBetAmountWon(bets: Bet[], winnerBets: Bet[]): FinishBetDto[] {
   const sumValueAllBets = bets.reduce((sum, bet) => sum + bet.amountBet, 0);
-  // FIXME: use winBets rather than bets
-  const sumValueWinningBets = bets.reduce((sum, bet) => sum + (bet.status === Status.WON ? bet.amountBet : 0), 0);
+  const sumValueWinningBets = winnerBets.reduce((sum, bet) => sum + bet.amountBet, 0);
 
-  return bets.map((bet) => ({ ...bet, amountWon: updateAmountWon(bet, sumValueAllBets, sumValueWinningBets) }));
+  return bets.map((bet) => ({
+    id: bet.id,
+    participantId: bet.participantId,
+    amountWon: getAmountWon(bet, sumValueAllBets, sumValueWinningBets),
+    status: bet.status,
+  }));
 }
 
-function updateAmountWon(bet: Bet, sumValueAllBets: number, sumValueWinningBets: number): number {
-  return bet.status === Status.WON ? betAmountWon(bet.amountBet, sumValueAllBets, sumValueWinningBets) : 0;
-}
-
-function betAmountWon(amountBet: number, sumValueAllBets: number, sumValueWinningBets: number): number {
-  return Math.floor((amountBet / sumValueWinningBets) * sumValueAllBets * (1 - HOUSE_FEE));
-}
-
-function filterAmountWonWinParticipants(bets: Bet[]): FinishParticipantDto[] {
+function filterAmountWonWinParticipants(bets: FinishBetDto[]): FinishParticipantDto[] {
   const result: FinishParticipantDto[] = [];
   for (let i = 0; i < bets.length; i++) {
     if (bets[i].status === Status.WON) {
@@ -82,6 +74,22 @@ function filterAmountWonWinParticipants(bets: Bet[]): FinishParticipantDto[] {
     }
   }
   return result;
+}
+
+function getNewStatus(bet: Bet, game: InputFinishGameDto): Status {
+  return isBetWon(bet, game) ? Status.WON : Status.LOST;
+}
+
+function isBetWon(bet: Bet, game: InputFinishGameDto): boolean {
+  return bet.homeTeamScore === game.homeTeamScore && bet.awayTeamScore === game.awayTeamScore;
+}
+
+function getAmountWon(bet: Bet, sumValueAllBets: number, sumValueWinningBets: number): number {
+  return bet.status === Status.WON ? calculateAmountWon(bet.amountBet, sumValueAllBets, sumValueWinningBets) : 0;
+}
+
+function calculateAmountWon(amountBet: number, sumValueAllBets: number, sumValueWinningBets: number): number {
+  return Math.floor((amountBet / sumValueWinningBets) * sumValueAllBets * (1 - HOUSE_FEE));
 }
 
 const gameService = { findAll, findById, create, finish };
