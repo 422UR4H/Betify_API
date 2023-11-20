@@ -5,12 +5,12 @@ import participantService from './participant.services';
 import gameService from './game.services';
 import { Bet, Status } from '@prisma/client';
 
-async function create(bet: InputBetDto): Promise<Bet> {
+async function createAndLiquidadePayment(bet: InputBetDto): Promise<Bet> {
   const { participantId, amountBet } = bet;
 
-  const participant = await participantService.findById(participantId);
+  const { balance } = await participantService.findById(participantId);
   // FIXME: unit test here
-  if (participant.balance < amountBet) {
+  if (balance < amountBet) {
     throw customErrors.forbidden("Participant doesn't have enough balance");
   }
 
@@ -20,11 +20,13 @@ async function create(bet: InputBetDto): Promise<Bet> {
 
   const createBetDto: CreateBetDto = { ...bet, status: Status.PENDING };
   // FIXME: optimize with transaction
-  const newBet: OutputBetDto = await betRepository.create(createBetDto);
-  await participantService.liquidatePayment(participantId, participant.balance, amountBet);
+  const newBet: OutputBetDto = (
+    await betRepository.createAndLiquidadePayment(createBetDto, participantService, balance)
+  )[0];
+  // await participantService.liquidatePayment(participantId, balance, amountBet);
 
   return newBet;
 }
 
-const betService = { create };
+const betService = { createAndLiquidadePayment };
 export default betService;

@@ -1,9 +1,19 @@
 import prisma from '@/database/db.connection';
 import { InputBetDto } from '@/protocols/bet.protocols';
 
-async function create(data: InputBetDto) {
+function create(data: InputBetDto) {
   return prisma.bet.create({ data });
 }
 
-const betRepository = { create };
+async function createAndLiquidadePayment(data: InputBetDto, participantService: any, balance: number) {
+  return prisma.$transaction([
+    create(data),
+    prisma.participant.update({
+      where: { id: data.participantId },
+      data: { balance: { decrement: data.amountBet } },
+    }),
+  ]);
+}
+
+const betRepository = { createAndLiquidadePayment };
 export default betRepository;
