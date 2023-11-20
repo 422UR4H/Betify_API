@@ -7,4 +7,5 @@ const participantRouter = Router();
 
 participantRouter.get('/participants', participantController.findAll);
 participantRouter.post('/participants', validateSchema(participantSchema), participantController.create);
+
 export default participantRouter;
