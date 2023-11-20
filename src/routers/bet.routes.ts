@@ -5,6 +5,6 @@ import { Router } from 'express';
 
 const router = Router();
 
-router.post('/bets', validateSchema(betSchema), betController.create);
+router.post('/', validateSchema(betSchema), betController.create);
 
 export default router;

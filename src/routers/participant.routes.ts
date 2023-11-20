@@ -5,7 +5,7 @@ import participantController from '@/controllers/participant.controllers';
 
 const participantRouter = Router();
 
-participantRouter.get('/participants', participantController.findAll);
-participantRouter.post('/participants', validateSchema(participantSchema), participantController.create);
+participantRouter.get('/', participantController.findAll);
+participantRouter.post('/', validateSchema(participantSchema), participantController.create);
 
 export default participantRouter;

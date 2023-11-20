@@ -6,9 +6,9 @@ import betRouter from './bet.routes';
 
 const router = Router();
 
-router.use(healthRouter);
-router.use(participantRouter);
-router.use(gameRouter);
-router.use(betRouter);
+router.use('/health', healthRouter);
+router.use('/participants', participantRouter);
+router.use('/games', gameRouter);
+router.use('/bets', betRouter);
 
 export default router;
