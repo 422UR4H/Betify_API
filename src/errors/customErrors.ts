@@ -4,10 +4,6 @@ import httpStatus from 'http-status';
 export function badRequest(message: string = 'entity is not valid'): CustomError {
   return new CustomError('badRequest', message, httpStatus.BAD_REQUEST);
 }
-export function unauthorized(entity?: string): CustomError {
-  const message = !!entity ? `incorrect ${entity}` : 'access denied!';
-  return new CustomError('unauthorized', message, httpStatus.UNAUTHORIZED);
-}
 export function notFound(entity: string = 'entity'): CustomError {
   return new CustomError('notFound', `${entity} does not exist`, httpStatus.NOT_FOUND);
 }
@@ -41,7 +37,6 @@ export function internalServerError(message: string | void): CustomError {
 }
 const customErrors = {
   badRequest,
-  unauthorized,
   notFound,
   conflict,
   forbidden,
