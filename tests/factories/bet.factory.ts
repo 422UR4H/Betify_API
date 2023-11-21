@@ -1,7 +1,7 @@
+import { Bet } from '@prisma/client';
 import prisma from '@/database/db.connection';
 // import { MAX_INT_32, MIN_PARTICIPANT_BALANCE } from '@/utils/constants.utils';
 // import { faker } from '@faker-js/faker';
-import { Bet } from '@prisma/client';
 
 function build(
   homeTeamScore: number,

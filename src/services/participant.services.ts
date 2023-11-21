@@ -1,7 +1,8 @@
 import customErrors from '@/errors/customErrors';
 import { InputParticipantDto, OutputParticipantDto } from '@/protocols/participant.protocols';
-import participantRepository from '@/repositories/participant.repository';
-import { liquidatePayment as liquidatePaymentRepository } from '@/repositories/participant.repository';
+import participantRepository, {
+  liquidatePayment as liquidatePaymentRepository,
+} from '@/repositories/participant.repository';
 
 async function findAll(): Promise<OutputParticipantDto[]> {
   return await participantRepository.findAll();

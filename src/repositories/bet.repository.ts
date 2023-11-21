@@ -7,10 +7,7 @@ function create(data: InputBetDto) {
 
 async function createAndLiquidadePayment(data: InputBetDto, liquidatePayment: Function) {
   const { participantId, amountBet } = data;
-  return prisma.$transaction([
-    create(data),
-    liquidatePayment(participantId, amountBet)
-  ]);
+  return prisma.$transaction([create(data), liquidatePayment(participantId, amountBet)]);
 }
 
 const betRepository = { createAndLiquidadePayment };

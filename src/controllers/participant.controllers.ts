@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
+import httpStatus from 'http-status';
 import { InputParticipantDto } from '@/protocols/participant.protocols';
 import participantService from '@/services/participant.services';
-import httpStatus from 'http-status';
 
 async function findAll(_req: Request, res: Response) {
   const participants = await participantService.findAll();

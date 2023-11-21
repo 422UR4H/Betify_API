@@ -1,6 +1,6 @@
+import Joi from 'joi';
 import { InputFinishGameDto, InputGameDto } from '@/protocols/game.protocols';
 import { MAX_INT_32 } from '@/utils/constants.utils';
-import Joi from 'joi';
 
 export const gameSchema = Joi.object<InputGameDto>({
   homeTeamName: Joi.string().required(),

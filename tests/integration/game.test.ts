@@ -1,13 +1,13 @@
 import supertest from 'supertest';
 import httpStatus from 'http-status';
-import app from 'app';
+import { Participant } from '@prisma/client';
 import gameFactory from '../factories/game.factory';
 import { cleanDB } from '../helpers';
 import participantFactory from '../factories/participant.factory';
 import betFactory from '../factories/bet.factory';
+import app from 'app';
 import { GameWithBets, InputFinishGameDto } from '@/protocols/game.protocols';
 import { TIMEOUT_FINISH_GAME_TEST } from '@/utils/constants.utils';
-import { Participant } from '@prisma/client';
 
 const api = supertest(app);
 

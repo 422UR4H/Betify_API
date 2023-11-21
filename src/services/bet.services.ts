@@ -1,9 +1,9 @@
+import { Bet, Status } from '@prisma/client';
+import participantService from './participant.services';
+import gameService from './game.services';
 import customErrors from '@/errors/customErrors';
 import { CreateBetDto, InputBetDto, OutputBetDto } from '@/protocols/bet.protocols';
 import betRepository from '@/repositories/bet.repository';
-import participantService from './participant.services';
-import gameService from './game.services';
-import { Bet, Status } from '@prisma/client';
 
 async function createAndLiquidadePayment(bet: InputBetDto): Promise<Bet> {
   const { participantId, amountBet } = bet;

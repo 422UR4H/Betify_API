@@ -1,6 +1,6 @@
-import prisma from '@/database/db.connection';
 import { faker } from '@faker-js/faker';
 import { Game } from '@prisma/client';
+import prisma from '@/database/db.connection';
 
 function build(homeTeamName: string, awayTeamName: string): Promise<Game> {
   return prisma.game.create({

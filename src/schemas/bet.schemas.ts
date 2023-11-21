@@ -1,6 +1,6 @@
+import Joi from 'joi';
 import { InputBetDto } from '@/protocols/bet.protocols';
 import { MAX_INT_32 } from '@/utils/constants.utils';
-import Joi from 'joi';
 
 export const betSchema = Joi.object<InputBetDto>({
   homeTeamScore: Joi.number().min(0).max(MAX_INT_32).required(),

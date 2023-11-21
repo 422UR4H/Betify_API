@@ -2,9 +2,9 @@ import express, { json } from 'express';
 import 'express-async-errors';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
 import router from '@/routers/index.routes';
 import errorHandler from '@/middlewares/errorHandler';
-import helmet from 'helmet';
 
 dotenv.config();
 

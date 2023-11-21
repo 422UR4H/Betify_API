@@ -1,6 +1,6 @@
-import healthService from '@/services/health.services';
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
+import healthService from '@/services/health.services';
 
 function get(_req: Request, res: Response) {
   const result = healthService.get();

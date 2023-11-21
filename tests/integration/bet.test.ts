@@ -1,10 +1,10 @@
 import supertest from 'supertest';
 import httpStatus from 'http-status';
-import app from 'app';
+import { Status } from '@prisma/client';
 import { cleanDB } from '../helpers';
 import participantFactory from '../factories/participant.factory';
 import gameFactory from '../factories/game.factory';
-import { Status } from '@prisma/client';
+import app from 'app';
 import { MAX_INT_32 } from '@/utils/constants.utils';
 import { InputBetDto } from '@/protocols/bet.protocols';
 

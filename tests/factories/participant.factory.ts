@@ -1,5 +1,5 @@
-import prisma from '@/database/db.connection';
 import { faker } from '@faker-js/faker/locale/en_US';
+import prisma from '@/database/db.connection';
 import { MAX_INT_32, MIN_PARTICIPANT_BALANCE } from '@/utils/constants.utils';
 import { OutputParticipantDto } from '@/protocols/participant.protocols';
 

@@ -1,8 +1,8 @@
 import supertest from 'supertest';
 import httpStatus from 'http-status';
-import app from 'app';
 import participantFactory from '../factories/participant.factory';
 import { cleanDB } from '../helpers';
+import app from 'app';
 
 const api = supertest(app);
 

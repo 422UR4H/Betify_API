@@ -1,7 +1,7 @@
-import { InputFinishGameDto, InputGameDto } from '@/protocols/game.protocols';
-import gameService from '@/services/game.services';
 import { Request, Response } from 'express';
 import httpStatus from 'http-status';
+import { InputFinishGameDto, InputGameDto } from '@/protocols/game.protocols';
+import gameService from '@/services/game.services';
 
 async function findAll(_req: Request, res: Response) {
   const games = await gameService.findAll();

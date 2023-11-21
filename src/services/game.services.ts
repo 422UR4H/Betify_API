@@ -1,8 +1,8 @@
+import { Bet, Game, Status } from '@prisma/client';
 import customErrors, { badRequest, gameAlreadyFinishedConflict, notFound } from '@/errors/customErrors';
 import { FinishBetDto, FinishParticipantDto } from '@/protocols/bet.protocols';
 import gameRepository from '@/repositories/game.repository';
 import { HOUSE_FEE } from '@/utils/constants.utils';
-import { Bet, Game, Status } from '@prisma/client';
 import {
   FinishGameDto,
   GameWithBets,

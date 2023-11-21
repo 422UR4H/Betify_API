@@ -1,5 +1,5 @@
-import { CustomError } from '@/protocols/customError.protocols';
 import httpStatus from 'http-status';
+import { CustomError } from '@/protocols/customError.protocols';
 
 export function badRequest(message: string = 'entity is not valid'): CustomError {
   return new CustomError('badRequest', message, httpStatus.BAD_REQUEST);
