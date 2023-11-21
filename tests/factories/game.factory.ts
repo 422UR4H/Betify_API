@@ -12,8 +12,19 @@ async function buildRandom() {
   return build(faker.lorem.words({ min: 1, max: 5 }), faker.lorem.words({ min: 1, max: 5 }));
 }
 
+function buildRandomFinishedGame() {
+  return prisma.game.create({
+    data: {
+      homeTeamName: faker.lorem.words({ min: 1, max: 5 }),
+      awayTeamName: faker.lorem.words({ min: 1, max: 5 }),
+      isFinished: true,
+    },
+  });
+}
+
 const gameFactory = {
   build,
   buildRandom,
+  buildRandomFinishedGame,
 };
 export default gameFactory;

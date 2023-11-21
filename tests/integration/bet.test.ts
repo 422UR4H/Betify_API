@@ -5,6 +5,7 @@ import { cleanDB } from '../helpers';
 import participantFactory from '../factories/participant.factory';
 import gameFactory from '../factories/game.factory';
 import { Status } from '@prisma/client';
+import { MAX_INT_32 } from '@/utils/constants.utils';
 
 const api = supertest(app);
 
@@ -43,12 +44,12 @@ describe('POST /bets', () => {
 
   describe('when body is valid, participant and game exists', () => {
     it('should return a 201 status code and bet created', async () => {
-      const participant = await participantFactory.buildRandom();
+      const { id: participantId } = await participantFactory.buildRandom();
       const game = await gameFactory.buildRandom();
 
       const { status, body } = await api.post('/bets').send({
         ...validBody,
-        participantId: participant.id,
+        participantId,
         gameId: game.id,
       });
       expect(status).toBe(httpStatus.CREATED);
@@ -60,11 +61,42 @@ describe('POST /bets', () => {
         status: Status.PENDING,
         amountWon: null,
         gameId: game.id,
-        participantId: participant.id,
+        participantId,
         createdAt: expect.any(String),
         updatedAt: expect.any(String),
       });
       // TODO: check that the balance is liquidated
+    });
+
+    // should be units, but to test the integration with errors, it was done here
+    it('should return a 403 status code and bet created', async () => {
+      const participant = await participantFactory.buildRandom();
+      const game = await gameFactory.buildRandom();
+
+      if (participant.balance >= MAX_INT_32) {
+        participant.balance = MAX_INT_32 - 1;
+      }
+      const { status, text } = await api.post('/bets').send({
+        ...validBody,
+        amountBet: participant.balance + 1,
+        participantId: participant.id,
+        gameId: game.id,
+      });
+      expect(status).toBe(httpStatus.FORBIDDEN);
+      expect(text).toBe("Participant doesn't have enough balance");
+    });
+
+    it('should return a 410 status code and bet created', async () => {
+      const { id: participantId } = await participantFactory.buildRandom();
+      const { id: gameId } = await gameFactory.buildRandomFinishedGame();
+
+      const { status, text } = await api.post('/bets').send({
+        ...validBody,
+        participantId,
+        gameId,
+      });
+      expect(status).toBe(httpStatus.GONE);
+      expect(text).toBe("This game is already over");
     });
   });
 });
