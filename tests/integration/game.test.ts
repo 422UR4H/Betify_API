@@ -6,6 +6,8 @@ import { cleanDB } from '../helpers';
 import participantFactory from '../factories/participant.factory';
 import betFactory from '../factories/bet.factory';
 import { GameWithBets } from '@/protocols/game.protocols';
+import { TIMEOUT_FINISH_GAME_TEST } from '@/utils/constants.utils';
+import { Participant } from '@prisma/client';
 
 const api = supertest(app);
 
@@ -179,49 +181,76 @@ describe('POST /games/:id/finish', () => {
     expect(text).toBe('Game is already finished');
   });
 
-  it('should return 200 and one game when given a valid and existing id', async () => {
-    const game = await gameFactory.buildRandom();
-    const participant1 = await participantFactory.buildRandom();
-    const participant2 = await participantFactory.buildRandom();
-    const participant3 = await participantFactory.buildRandom();
-    await betFactory.build(2, 2, participant1.id, 1000, game.id);
-    await betFactory.build(2, 2, participant2.id, 2000, game.id);
-    await betFactory.build(3, 1, participant3.id, 3000, game.id);
+  it(
+    'should return 200 and one game when given a valid and existing id',
+    async () => {
+      const game = await gameFactory.buildRandom();
+      const participantList = await participantFactory.buildRandomList(3);
+      const [participant1, participant2, participant3] = participantList;
+      // const participant1 = await participantFactory.buildRandom();
+      // const participant2 = await participantFactory.buildRandom();
+      // const participant3 = await participantFactory.buildRandom();
+      await betFactory.build(2, 2, participant1.id, 1000, game.id);
+      await betFactory.build(2, 2, participant2.id, 2000, game.id);
+      await betFactory.build(3, 1, participant3.id, 3000, game.id);
+      const { status, body } = await api.post(`/games/${game.id}/finish`).send(validBody);
 
-    const { status, body } = await api.post(`/games/${game.id}/finish`).send(validBody);
+      expect(status).toBe(httpStatus.OK);
+      expect(body).toEqual(
+        expect.objectContaining({
+          id: game.id,
+          homeTeamName: game.homeTeamName,
+          awayTeamName: game.awayTeamName,
+          homeTeamScore: validBody.homeTeamScore,
+          awayTeamScore: validBody.awayTeamScore,
+          isFinished: true,
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        }),
+      );
+      const gameResponse = await api.get(`/games/${game.id}`);
+      // const participantsResponse = await api.get(`/participants`);
+      // only tests if response is sent successfully to isolate the /games/:id/finish endpoint
+      if (!!gameResponse?.body) validateAmountWonBets(gameResponse.body as GameWithBets, participantList);
+      // if (!!participantsResponse?.body) validateBalances(participantsResponse.body as Participant[], participantList);
+    },
+    TIMEOUT_FINISH_GAME_TEST,
+  );
+});
 
-    expect(status).toBe(httpStatus.OK);
-    expect(body).toEqual(
-      expect.objectContaining({
-        id: game.id,
-        homeTeamName: game.homeTeamName,
-        awayTeamName: game.awayTeamName,
-        homeTeamScore: validBody.homeTeamScore,
-        awayTeamScore: validBody.awayTeamScore,
-        isFinished: true,
-        createdAt: expect.any(String),
-        updatedAt: expect.any(String),
-      }),
-    );
+function validateAmountWonBets(gameFinished: GameWithBets, participantList: Participant[]) {
+  const participants = { id1: participantList[0].id, id2: participantList[1].id, id3: participantList[2].id };
+  const { Bet: bets } = gameFinished;
 
-    const response = await api.get(`/games/${game.id}`);
-    // only tests if response is sent successfully to isolate the /games/:id/finish endpoint
-    if (!!response?.body) {
-      const gameFinished = response.body as GameWithBets;
-      const { Bet: bets } = gameFinished;
-      bets.forEach((bet) => {
-        switch (bet.participantId) {
-          case participant1.id:
-            expect(bet.amountWon).toBe(1400);
-            break;
-          case participant2.id:
-            expect(bet.amountWon).toBe(2800);
-            break;
-          case participant3.id:
-            expect(bet.amountWon).toBe(0);
-            break;
-        }
-      });
+  bets.forEach((bet) => {
+    switch (bet.participantId) {
+      case participants.id1:
+        expect(bet.amountWon).toBe(1400);
+        break;
+      case participants.id2:
+        expect(bet.amountWon).toBe(2800);
+        break;
+      case participants.id3:
+        expect(bet.amountWon).toBe(0);
+        break;
     }
   });
-});
+}
+
+// function validateBalances(participantUpdated: Participant[], participantList: Participant[]) {
+//   const participants = { id1: participantList[0].id, id2: participantList[1].id, id3: participantList[2].id };
+
+//   participantUpdated.forEach((p) => {
+//     switch (p.id) {
+//       case participants.id1:
+//         expect(p.balance).toBe(p.balance - 1000 + 1400);
+//         break;
+//       case participants.id2:
+//         expect(p.balance).toBe(p.balance - 2000 + 2800);
+//         break;
+//         case participants.id3:
+//         expect(p.balance).toBe(p.balance - 3000);
+//         break;
+//     }
+//   });
+// }

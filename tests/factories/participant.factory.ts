@@ -19,8 +19,17 @@ async function buildRandom() {
   );
 }
 
+async function buildRandomList(length: number) {
+  const list = [];
+  for (let i = 0; i < length; i++) {
+    list.push(await buildRandom());
+  }
+  return list;
+}
+
 const participantFactory = {
   build,
   buildRandom,
+  buildRandomList,
 };
 export default participantFactory;
