@@ -9,7 +9,7 @@ The architectural layers were built based on the MVC pattern.
 
 ## Demo
 
-### Deploy API: link https://betify-api.onrender.com
+### Deploy API link: https://betify-api.onrender.com
 
 <br />
 
