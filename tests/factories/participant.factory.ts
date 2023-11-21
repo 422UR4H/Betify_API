@@ -9,7 +9,7 @@ function build(name: string, balance: number): Promise<OutputParticipantDto> {
   });
 }
 
-async function buildRandom() {
+async function buildRandom(): Promise<OutputParticipantDto> {
   return build(
     faker.person.fullName(),
     faker.number.int({
@@ -19,7 +19,7 @@ async function buildRandom() {
   );
 }
 
-async function buildRandomList(length: number) {
+async function buildRandomList(length: number): Promise<OutputParticipantDto[]> {
   const list = [];
   for (let i = 0; i < length; i++) {
     list.push(await buildRandom());

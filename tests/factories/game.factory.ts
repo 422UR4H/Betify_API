@@ -8,11 +8,11 @@ function build(homeTeamName: string, awayTeamName: string): Promise<Game> {
   });
 }
 
-async function buildRandom() {
+async function buildRandom(): Promise<Game> {
   return build(faker.lorem.words({ min: 1, max: 5 }), faker.lorem.words({ min: 1, max: 5 }));
 }
 
-function buildRandomFinishedGame() {
+function buildRandomFinishedGame(): Promise<Game> {
   return prisma.game.create({
     data: {
       homeTeamName: faker.lorem.words({ min: 1, max: 5 }),

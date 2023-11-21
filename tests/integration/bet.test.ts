@@ -6,6 +6,7 @@ import participantFactory from '../factories/participant.factory';
 import gameFactory from '../factories/game.factory';
 import { Status } from '@prisma/client';
 import { MAX_INT_32 } from '@/utils/constants.utils';
+import { InputBetDto } from '@/protocols/bet.protocols';
 
 const api = supertest(app);
 
@@ -14,7 +15,7 @@ beforeEach(async () => {
 });
 
 describe('POST /bets', () => {
-  const validBody = {
+  const validBody: InputBetDto = {
     homeTeamScore: 0,
     awayTeamScore: 3,
     participantId: 1,
@@ -96,7 +97,7 @@ describe('POST /bets', () => {
         gameId,
       });
       expect(status).toBe(httpStatus.GONE);
-      expect(text).toBe("This game is already over");
+      expect(text).toBe('This game is already over');
     });
   });
 });

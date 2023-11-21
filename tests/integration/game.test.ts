@@ -5,7 +5,7 @@ import gameFactory from '../factories/game.factory';
 import { cleanDB } from '../helpers';
 import participantFactory from '../factories/participant.factory';
 import betFactory from '../factories/bet.factory';
-import { GameWithBets } from '@/protocols/game.protocols';
+import { GameWithBets, InputFinishGameDto } from '@/protocols/game.protocols';
 import { TIMEOUT_FINISH_GAME_TEST } from '@/utils/constants.utils';
 import { Participant } from '@prisma/client';
 
@@ -124,7 +124,7 @@ describe('GET /games/:id', () => {
 });
 
 describe('POST /games/:id/finish', () => {
-  const validBody = {
+  const validBody: InputFinishGameDto = {
     homeTeamScore: 2,
     awayTeamScore: 2,
   };
@@ -135,7 +135,7 @@ describe('POST /games/:id/finish', () => {
   });
 
   it('should return status 422 when body is in invalid format', async () => {
-    const invalidBody = {
+    const invalidBody: any = {
       homeTeamScores: 2,
       awayTeamScore: 0,
     };
@@ -144,16 +144,16 @@ describe('POST /games/:id/finish', () => {
   });
 
   it('should return status 422 when body is invalid', async () => {
-    const invalidBody = {
+    const invalidBody: InputFinishGameDto = {
       homeTeamScore: 2,
-      awayTeamScore: null,
+      awayTeamScore: null!,
     };
     const { status } = await api.post('/games/batata/finish').send(invalidBody);
     expect(status).toBe(httpStatus.UNPROCESSABLE_ENTITY);
   });
 
   it('should return status 422 when body is sent incompleted', async () => {
-    const invalidBody = {
+    const invalidBody: any = {
       homeTeamScore: 2,
     };
     const { status } = await api.post('/games/batata/finish').send(invalidBody);

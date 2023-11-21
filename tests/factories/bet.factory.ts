@@ -15,7 +15,7 @@ function build(
   });
 }
 
-// async function buildRandom(participantId: number, gameId: number) {
+// async function buildRandom(participantId: number, gameId: number): Promise<Bet> {
 //   return build(
 //     faker.number.int({ min: 0, max: MAX_INT_32 }),
 //     faker.number.int({ min: 0, max: MAX_INT_32 }),
