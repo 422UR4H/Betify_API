@@ -21,7 +21,8 @@
     "test:cov": "npm run load:test:env -- jest -- --coverage -i",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test:report": "dotenv -e .env.test prisma migrate deploy & dotenv -e .env.test jest -- --coverage --runInBand --coverageReporters=json-summary --coverageDirectory=coverage --collectCoverageFrom='**/*.ts'"
   },
   "author": "422UR4H",
   "license": "ISC",
