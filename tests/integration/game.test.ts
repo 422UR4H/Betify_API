@@ -3,6 +3,9 @@ import httpStatus from 'http-status';
 import app from 'app';
 import gameFactory from '../factories/game.factory';
 import { cleanDB } from '../helpers';
+import participantFactory from '../factories/participant.factory';
+import betFactory from '../factories/bet.factory';
+import { GameWithBets } from '@/protocols/game.protocols';
 
 const api = supertest(app);
 
@@ -115,5 +118,110 @@ describe('GET /games/:id', () => {
         updatedAt: expect.any(String),
       }),
     );
+  });
+});
+
+describe('POST /games/:id/finish', () => {
+  const validBody = {
+    homeTeamScore: 2,
+    awayTeamScore: 2,
+  };
+
+  it('should return status 422 when body is not sent', async () => {
+    const { status } = await api.post('/games/batata/finish');
+    expect(status).toBe(httpStatus.UNPROCESSABLE_ENTITY);
+  });
+
+  it('should return status 422 when body is in invalid format', async () => {
+    const invalidBody = {
+      homeTeamScores: 2,
+      awayTeamScore: 0,
+    };
+    const { status } = await api.post('/games/batata/finish').send(invalidBody);
+    expect(status).toBe(httpStatus.UNPROCESSABLE_ENTITY);
+  });
+
+  it('should return status 422 when body is invalid', async () => {
+    const invalidBody = {
+      homeTeamScore: 2,
+      awayTeamScore: null,
+    };
+    const { status } = await api.post('/games/batata/finish').send(invalidBody);
+    expect(status).toBe(httpStatus.UNPROCESSABLE_ENTITY);
+  });
+
+  it('should return status 422 when body is sent incompleted', async () => {
+    const invalidBody = {
+      homeTeamScore: 2,
+    };
+    const { status } = await api.post('/games/batata/finish').send(invalidBody);
+    expect(status).toBe(httpStatus.UNPROCESSABLE_ENTITY);
+  });
+
+  it('should return status 400 when id is invalid', async () => {
+    const { status, text } = await api.post('/games/batata/finish').send(validBody);
+    expect(status).toBe(httpStatus.BAD_REQUEST);
+    expect(text).toBe('id must be a positive non null integer');
+  });
+
+  it('should return 404 when game does not exists', async () => {
+    const { status, text } = await api.post('/games/1/finish').send(validBody);
+    expect(status).toBe(httpStatus.NOT_FOUND);
+    expect(text).toBe('Game does not exist');
+  });
+
+  it('should return 409 when game already finished', async () => {
+    const { id } = await gameFactory.buildRandom();
+    await api.post(`/games/${id}/finish`).send(validBody);
+
+    const { status, text } = await api.post(`/games/${id}/finish`).send(validBody);
+    expect(status).toBe(httpStatus.CONFLICT);
+    expect(text).toBe('Game is already finished');
+  });
+
+  it('should return 200 and one game when given a valid and existing id', async () => {
+    const game = await gameFactory.buildRandom();
+    const participant1 = await participantFactory.buildRandom();
+    const participant2 = await participantFactory.buildRandom();
+    const participant3 = await participantFactory.buildRandom();
+    await betFactory.build(2, 2, participant1.id, 1000, game.id);
+    await betFactory.build(2, 2, participant2.id, 2000, game.id);
+    await betFactory.build(3, 1, participant3.id, 3000, game.id);
+
+    const { status, body } = await api.post(`/games/${game.id}/finish`).send(validBody);
+
+    expect(status).toBe(httpStatus.OK);
+    expect(body).toEqual(
+      expect.objectContaining({
+        id: game.id,
+        homeTeamName: game.homeTeamName,
+        awayTeamName: game.awayTeamName,
+        homeTeamScore: validBody.homeTeamScore,
+        awayTeamScore: validBody.awayTeamScore,
+        isFinished: true,
+        createdAt: expect.any(String),
+        updatedAt: expect.any(String),
+      }),
+    );
+
+    const response = await api.get(`/games/${game.id}`);
+    // only tests if response is sent successfully to isolate the /games/:id/finish endpoint
+    if (!!response?.body) {
+      const gameFinished = response.body as GameWithBets;
+      const { Bet: bets } = gameFinished;
+      bets.forEach((bet) => {
+        switch (bet.participantId) {
+          case participant1.id:
+            expect(bet.amountWon).toBe(1400);
+            break;
+          case participant2.id:
+            expect(bet.amountWon).toBe(2800);
+            break;
+          case participant3.id:
+            expect(bet.amountWon).toBe(0);
+            break;
+        }
+      });
+    }
   });
 });
