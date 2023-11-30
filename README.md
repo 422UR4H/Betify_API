@@ -105,7 +105,7 @@ If the structure is not respected, a 422 error is returned.
 
 # Technologies used
 
-For this project, we used:
+For this project, I used:
 
 - Node (version 18.17.0);
 - Express;
